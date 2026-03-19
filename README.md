@@ -1,58 +1,99 @@
 # 16-Bit Pipelined Processor in SystemVerilog
 
-This repository contains an academic digital design project that implements a small pipelined processor using SystemVerilog and Intel Quartus schematic blocks.
+This repository presents a 16-bit pipelined processor developed as a digital design and computer architecture project using SystemVerilog and Intel Quartus Prime Lite.
 
-The project focuses on CPU datapath and control integration rather than application software. It combines HDL modules with Quartus Block Diagram Files to model a multi-stage processor with hazard handling, forwarding, instruction memory, and data memory.
+The design combines HDL modules with Quartus Block Diagram Files (`.bdf`) to implement the processor datapath, control path, pipeline registers, memory blocks, and hazard-management logic. The project is intended to showcase practical FPGA-oriented CPU design, including forwarding, stalling, branching, and modular hardware integration.
 
-## Highlights
+## Project Overview
+
+The processor is organized as a multi-stage pipeline with dedicated registers between stages and supporting control logic for instruction flow and data dependencies. The implementation emphasizes:
+
+- datapath and control separation
+- modular hardware design in SystemVerilog
+- pipeline hazard detection and forwarding
+- branch and jump handling
+- FPGA workflow familiarity using Quartus Prime Lite
+
+## Architecture
+
+The processor is built around a staged pipeline and supporting subsystems:
+
+```text
+Instruction Fetch
+  PC -> Instruction Memory -> IF/ID
+
+Instruction Decode
+  Register File -> Control Unit -> Immediate Generator -> Branch Logic
+
+Execute
+  Forwarding Logic -> ALU Control -> ALU -> ID/EX and EX/MEM pipeline flow
+
+Memory
+  Data Memory access through RAM block
+
+Write Back
+  Result selection -> Register File update
+```
+
+### Main Architectural Blocks
+
+- `Block_proccesor.bdf`: top-level system integration for the processor datapath and control connections.
+- `ALU.bdf` and `ALU_32.sv`: arithmetic and logic execution path, including ALU control and shift/rotate support.
+- `IF_ID.sv`, `ID_EX.sv`, `EX_MEM.sv`, `ME_WB.sv`: pipeline registers that isolate stage behavior and move control/data signals across the pipeline.
+- `control_Unit.sv` and `ALU_CU.sv`: core instruction decode and ALU operation selection logic.
+- `ForwardingUnit.sv`, `HazardDetection.sv`, `BranchForwardingUnit.sv`, `BranchHazardUnit.sv`: hazard mitigation logic used to reduce incorrect execution caused by data and branch dependencies.
+- `rgfile.bdf`, `register0.sv`, `rg.sv`: register file implementation and supporting register modules.
+- `instruction_memory.sv`, `rom_init.hex`, `rammem.v`: instruction and data memory components used by the processor.
+
+## Key Features
 
 - 16-bit processor datapath
-- Multi-stage pipeline with dedicated pipeline registers
-- Control unit plus ALU control logic
-- Forwarding and hazard-detection units
-- Branch support and immediate generation
-- Register file, instruction memory, and data memory
-- Built for Intel Cyclone V in Quartus Prime Lite
-
-## Main Files
-
-- `Block_proccesor.bdf`: top-level processor integration
-- `ALU.bdf`: ALU subsystem integration
-- `instruction_memory.sv`: instruction ROM loader
-- `rammem.v`: data memory block
-- `IF_ID.sv`, `ID_EX.sv`, `EX_MEM.sv`, `ME_WB.sv`: pipeline registers
-- `control_Unit.sv`, `ALU_CU.sv`: control path
-- `ForwardingUnit.sv`, `HazardDetection.sv`, `BranchForwardingUnit.sv`, `BranchHazardUnit.sv`: pipeline hazard logic
+- pipelined execution model
+- forwarding support for dependent instructions
+- hazard detection and stall/flush control
+- branch and jump support
+- Quartus-based schematic and HDL co-design
+- Cyclone V target configuration
 
 ## Toolchain
 
 - Intel Quartus Prime Lite 18.1
-- Cyclone V target device: `5CSEMA6F31C6`
-- SystemVerilog + Quartus `.bdf` schematic design files
+- Target FPGA family: Cyclone V
+- Target device: `5CSEMA6F31C6`
+- Languages and formats: SystemVerilog and Quartus Block Diagram Files (`.bdf`)
 
-## How To Open
+## Repository Structure
 
-1. Open `ALUPROJECT.qpf` in Quartus Prime.
+- `*.sv`, `*.v`: source HDL modules for datapath, control, pipeline registers, and memory.
+- `*.bdf`: Quartus schematic files used to integrate major hardware blocks.
+- `ALUPROJECT.qpf`, `ALUPROJECT.qsf`: Quartus project and settings files.
+- `rom_init.hex`: instruction memory initialization contents.
+
+## How To Open and Build
+
+1. Open `ALUPROJECT.qpf` in Quartus Prime Lite.
 2. Confirm the top-level entity is `Block_proccesor`.
 3. Compile the project from Quartus.
 
 ## What This Project Demonstrates
 
-- Datapath/control partitioning
-- Pipeline register design
-- Hazard mitigation with forwarding and stalling logic
-- FPGA-oriented project organization in Quartus
-- Mixing HDL modules with schematic-level integration
+This project highlights practical experience with:
 
-## Repository Notes
+- processor datapath design
+- control-path development
+- hardware pipelining
+- dependency handling through forwarding and hazard detection
+- schematic and HDL integration in an FPGA development workflow
+
+## Notes
 
 - Generated Quartus databases and output folders are intentionally excluded from version control.
-- This repo is meant to showcase the source design itself, not temporary build artifacts.
-- The project is strongest as a digital design / computer architecture portfolio piece.
+- The repository is structured to showcase the source design rather than temporary build artifacts.
+- This project is best presented as a digital design, FPGA, and computer architecture portfolio piece.
 
-## Next Improvements
+## Future Improvements
 
-- Add an automated testbench flow
-- Reduce remaining Quartus warnings
-- Clean up legacy or duplicate files
-- Add board-specific constraints if targeting deployment hardware
+- add automated testbenches
+- reduce remaining synthesis warnings
+- remove legacy or duplicate source files
+- add board-specific timing and pin constraints for deployment
