@@ -1,0 +1,20 @@
+# Quartus generated databases and outputs
+db/
+incremental_db/
+output_files/
+
+# Restore / archive metadata
+ALUPROJECT.restore.rpt
+qar_info.json
+*.qar
+
+# Local backup and temporary files
+*.bak
+*.tmp
+*.log
+
+# Optional waveform captures
+Waveform*.vwf
+
+# Common Quartus session files
+*.qws
